@@ -1,17 +1,20 @@
 class ReactiveEffect {
   private _fn: any;
-  private scheduler: any;
+  deps = [];
 
-  constructor(fn, scheduler) {
+  constructor(fn, public scheduler) {
     this._fn = fn;
     this.scheduler = scheduler;
   }
 
   run() {
-    activeEffect = this;
     let res = this._fn();
-    activeEffect = null;
     return res;
+  }
+  stop() {
+    this.deps.forEach((dep: any) => {
+      dep.delete(this);
+    });
   }
 }
 
@@ -34,6 +37,7 @@ export function track(target, key) {
   }
 
   dep.add(activeEffect);
+  activeEffect.deps.push(dep);
 }
 
 // 通过target - key - 拿到要触发的依赖
@@ -49,10 +53,21 @@ export function trigger(target, key) {
   }
 }
 
+// 通过runner --> effect实例 --> deps依赖 --> 删除当前 effect 
+export function stop(runner) {
+  runner.effect.stop();
+}
+
 let activeEffect;
 export function effect(fn, options: any = {}) {
   let _effect = new ReactiveEffect(fn, options.scheduler);
+  
+  activeEffect = _effect;
   _effect.run();
+  activeEffect = null;
 
-  return _effect.run.bind(_effect);
+
+  const runner: any = _effect.run.bind(_effect);
+  runner.effect = _effect;
+  return runner;
 }

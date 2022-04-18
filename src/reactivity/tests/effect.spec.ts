@@ -1,4 +1,4 @@
-import { effect } from "../effect";
+import { effect, stop } from "../effect";
 import { reactive } from "../reactive";
 
 describe("effect", () => {
@@ -97,9 +97,29 @@ describe("effect", () => {
     run();
     // // should have run
     expect(dummy).toBe(2);
-    
+
     obj.foo++;
-    runner()
+    runner();
+    expect(dummy).toBe(3);
+  });
+
+  it("stop", () => {
+    let dummy;
+    const obj = reactive({ foo: 1 });
+    const runner = effect(() => {
+      dummy = obj.foo;
+    });
+
+    obj.foo++;
+    expect(dummy).toBe(2);
+
+    // stop 之后 , 不会再执行 effect 的fn 
+    // stop内传入 dep , 将dep.deps中的dep移除
+    stop(runner);
+    obj.foo++;
+    expect(dummy).toBe(2);
+
+    runner();
     expect(dummy).toBe(3);
   });
 });
