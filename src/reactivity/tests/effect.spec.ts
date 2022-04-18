@@ -54,8 +54,47 @@ describe("effect", () => {
       temp += obj.number;
     });
     expect(temp).toBe(104);
-    obj.number++
+    obj.number++;
     expect(temp).toBe(206);
+  });
 
+  it("scheduler", () => {
+    // 1. 通过 effect 的第二个参数 传入一个 scheduler 的fn
+    // 2. effect初始化时候 , 还是会执行 effect 的fn
+    // 3. 当响应式对象的 set 被触发的时候 , 不会再执行 effect 的fn , 而是执行scheduler的fn
+    // 4. 执行当前effect的runner时候, 会再次执行fn
+    
+    let dummy;
+    let run: any;
+
+    const scheduler = jest.fn((param1) => {
+      run = runner;
+    });
+
+    const obj = reactive({
+      foo: 1,
+    });
+
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      { scheduler }
+    );
+
+    expect(scheduler).not.toHaveBeenCalled();
+    expect(dummy).toBe(1);
+
+    expect(scheduler).not.toHaveBeenCalled();
+    expect(dummy).toBe(1);
+    // should be called on first trigger
+    obj.foo++;
+    expect(scheduler).toHaveBeenCalledTimes(1);
+    // // should not run yet
+    expect(dummy).toBe(1);
+    // // manually run
+    run();
+    // // should have run
+    expect(dummy).toBe(2);
   });
 });
