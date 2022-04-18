@@ -113,7 +113,7 @@ describe("effect", () => {
     obj.foo++;
     expect(dummy).toBe(2);
 
-    // stop 之后 , 不会再执行 effect 的fn 
+    // stop 之后 , 不会再执行 effect 的fn
     // stop内传入 dep , 将dep.deps中的dep移除
     stop(runner);
     obj.foo++;
@@ -121,5 +121,23 @@ describe("effect", () => {
 
     runner();
     expect(dummy).toBe(3);
+  });
+
+  it("onStop", () => {
+    // stop 时候 , onStop 会被调用一次
+    let dummy;
+    const obj = reactive({ foo: 1 });
+    const onStop = jest.fn()
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      {
+        onStop,
+      }
+    );
+
+    stop(runner);
+    expect(onStop).toHaveBeenCalledTimes(1)
   });
 });

@@ -1,6 +1,10 @@
+import { extend } from "../shared";
+
 class ReactiveEffect {
   private _fn: any;
   deps = [];
+  active = true;
+  private onStop: any;
 
   constructor(fn, public scheduler) {
     this._fn = fn;
@@ -12,10 +16,20 @@ class ReactiveEffect {
     return res;
   }
   stop() {
-    this.deps.forEach((dep: any) => {
-      dep.delete(this);
-    });
+    if (this.active) {
+      cleanupEffect(this);
+      if (this.onStop) {
+        this.onStop();
+      }
+      this.active = false;
+    }
   }
+}
+
+function cleanupEffect(effect: ReactiveEffect) {
+  effect.deps.forEach((dep: any) => {
+    dep.delete(effect);
+  });
 }
 
 // target --> key --->dep
@@ -53,7 +67,7 @@ export function trigger(target, key) {
   }
 }
 
-// 通过runner --> effect实例 --> deps依赖 --> 删除当前 effect 
+// 通过runner --> effect实例 --> deps依赖 --> 删除当前 effect
 export function stop(runner) {
   runner.effect.stop();
 }
@@ -61,11 +75,12 @@ export function stop(runner) {
 let activeEffect;
 export function effect(fn, options: any = {}) {
   let _effect = new ReactiveEffect(fn, options.scheduler);
-  
+
+  extend(_effect, options);
+
   activeEffect = _effect;
   _effect.run();
   activeEffect = null;
-
 
   const runner: any = _effect.run.bind(_effect);
   runner.effect = _effect;
