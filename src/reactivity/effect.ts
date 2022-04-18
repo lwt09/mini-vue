@@ -30,6 +30,7 @@ function cleanupEffect(effect: ReactiveEffect) {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect);
   });
+  effect.deps.length = 0
 }
 
 // target --> key --->dep
