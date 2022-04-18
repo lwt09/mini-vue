@@ -63,12 +63,13 @@ describe("effect", () => {
     // 2. effect初始化时候 , 还是会执行 effect 的fn
     // 3. 当响应式对象的 set 被触发的时候 , 不会再执行 effect 的fn , 而是执行scheduler的fn
     // 4. 执行当前effect的runner时候, 会再次执行fn
-    
+
     let dummy;
     let run: any;
 
-    const scheduler = jest.fn((param1) => {
+    const scheduler = jest.fn(() => {
       run = runner;
+      return "我是scheduler的返回值";
     });
 
     const obj = reactive({
@@ -96,5 +97,9 @@ describe("effect", () => {
     run();
     // // should have run
     expect(dummy).toBe(2);
+    
+    obj.foo++;
+    runner()
+    expect(dummy).toBe(3);
   });
 });

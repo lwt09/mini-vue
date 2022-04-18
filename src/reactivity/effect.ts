@@ -1,6 +1,6 @@
 class ReactiveEffect {
   private _fn: any;
-  public scheduler: any;
+  private scheduler: any;
 
   constructor(fn, scheduler) {
     this._fn = fn;
