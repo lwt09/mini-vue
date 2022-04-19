@@ -1,4 +1,8 @@
-import { multableHandlers, readonlyHandlers, shallowReadonlyHandlers } from "./baseHandlers";
+import {
+  multableHandlers,
+  readonlyHandlers,
+  shallowReadonlyHandlers,
+} from "./baseHandlers";
 import { track, trigger } from "./effect";
 
 export const enum ReactiveFlags {
@@ -26,4 +30,7 @@ export function isReactive(value) {
 }
 export function isReadonly(value) {
   return !!(value && value[ReactiveFlags.IS_READONLY]);
+}
+export function isProxy(value) {
+  return isReactive(value) || isReadonly(value);
 }

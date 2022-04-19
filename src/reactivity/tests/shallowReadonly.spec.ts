@@ -1,5 +1,5 @@
 import { effect } from "../effect";
-import { isReadonly, reactive, readonly, shallowReadonly } from "../reactive";
+import { isProxy, isReadonly, reactive, readonly, shallowReadonly } from "../reactive";
 
 describe("shalloReadonly", () => {
   it("shalloReadonly", () => {
@@ -12,6 +12,8 @@ describe("shalloReadonly", () => {
     expect(dummy.foo).toBe(1);
     expect(isReadonly(dummy)).toBe(true);
     expect(isReadonly(dummy.bar)).toBe(false);
+
+    expect(isProxy(dummy)).toBe(true);
   });
 
   it("warn then call set ", () => {
