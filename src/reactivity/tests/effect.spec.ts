@@ -127,7 +127,7 @@ describe("effect", () => {
     // stop 时候 , onStop 会被调用一次
     let dummy;
     const obj = reactive({ foo: 1 });
-    const onStop = jest.fn()
+    const onStop = jest.fn();
     const runner = effect(
       () => {
         dummy = obj.foo;
@@ -138,6 +138,23 @@ describe("effect", () => {
     );
 
     stop(runner);
-    expect(onStop).toHaveBeenCalledTimes(1)
+    expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  it("nested effect", () => {
+    const user = reactive({
+      info: {
+        age: 1,
+      },
+    });
+
+    let currentAge;
+    effect(() => {
+      currentAge = user.info.age;
+    });
+
+    expect(currentAge).toBe(1);
+    user.info.age++;
+    expect(currentAge).toBe(2);
   });
 });
