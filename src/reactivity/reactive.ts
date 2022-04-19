@@ -1,4 +1,4 @@
-import { multableHandlers, readonlyHandlers } from "./baseHandlers";
+import { multableHandlers, readonlyHandlers, shallowReadonlyHandlers } from "./baseHandlers";
 import { track, trigger } from "./effect";
 
 export const enum ReactiveFlags {
@@ -11,6 +11,9 @@ export function reactive(raw) {
 }
 export function readonly(raw) {
   return createProxyObject(raw, readonlyHandlers);
+}
+export function shallowReadonly(raw) {
+  return createProxyObject(raw, shallowReadonlyHandlers);
 }
 
 // 生成 proxy
