@@ -13,4 +13,18 @@ describe("reactive", () => {
     expect(isReactive(observed)).toBe(true);
     expect(isReactive(original)).toBe(false);
   });
+
+  it("nested reactive", () => {
+    // 深层嵌套 reactive
+    const original = {
+      foo: {
+        bar: 1,
+      },
+      array: [{ bar: 2 }],
+    };
+    const observed = reactive(original);
+    expect(isReactive(observed.foo)).toBe(true);
+    expect(isReactive(observed.array)).toBe(true);
+    expect(isReactive(observed.array[0])).toBe(true);
+  });
 });
