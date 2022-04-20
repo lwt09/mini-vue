@@ -30,14 +30,14 @@ function cleanupEffect(effect: ReactiveEffect) {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect);
   });
-  effect.deps.length = 0
+  effect.deps.length = 0;
 }
 
 // target --> key --->dep
 // 把依赖放到 对应的对象的属性映射表里面去
 const targetMap = new Map();
 export function track(target, key) {
-  if (!activeEffect) return;
+  if (!isTracking()) return;
 
   let depsMap = targetMap.get(target);
   if (!depsMap) {
@@ -51,8 +51,15 @@ export function track(target, key) {
     depsMap.set(key, dep);
   }
 
+  // 收集依赖到dep( reavtive是通过 tagetMap.get(target).get(key) 来获取的 , ref 是通过ref.dep来获取的)
+  trackEffects(dep);
+}
+export function trackEffects(dep) {
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
+}
+export function isTracking(){
+  return !!activeEffect;
 }
 
 // 通过target - key - 拿到要触发的依赖
@@ -61,6 +68,10 @@ export function trigger(target, key) {
   let dep = depsMap.get(key);
   if (!dep) return;
 
+  // 触发dep的所有依赖
+  triggerEffect(dep);
+}
+export function triggerEffect(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler();
