@@ -12,7 +12,20 @@ class ReactiveEffect {
   }
 
   run() {
+    // 执行 fn  收集依赖
+    // 可以开始收集依赖了
+    shouldTrack = true;
+
+    // 执行的时候给全局的 activeEffect 赋值
+    // 利用全局属性来获取当前的 effect
+    activeEffect = this as any;
+
     let res = this._fn();
+
+    // 重置
+    shouldTrack = false;
+    activeEffect = undefined;
+
     return res;
   }
   stop() {
@@ -55,11 +68,13 @@ export function track(target, key) {
   trackEffects(dep);
 }
 export function trackEffects(dep) {
-  dep.add(activeEffect);
-  activeEffect.deps.push(dep);
+  if (!dep.has(activeEffect)) {
+    dep.add(activeEffect);
+    activeEffect.deps.push(dep);
+  }
 }
-export function isTracking(){
-  return !!activeEffect;
+export function isTracking() {
+  return shouldTrack && activeEffect !== undefined;
 }
 
 // 通过target - key - 拿到要触发的依赖
@@ -85,14 +100,15 @@ export function stop(runner) {
 }
 
 let activeEffect;
+let shouldTrack = false;
 export function effect(fn, options: any = {}) {
   let _effect = new ReactiveEffect(fn, options.scheduler);
 
   extend(_effect, options);
 
-  activeEffect = _effect;
+  // activeEffect = _effect;
   _effect.run();
-  activeEffect = null;
+  // activeEffect = null;
 
   const runner: any = _effect.run.bind(_effect);
   runner.effect = _effect;
