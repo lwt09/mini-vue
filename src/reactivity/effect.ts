@@ -1,6 +1,6 @@
 import { extend } from "../shared";
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any;
   deps = [];
   active = true;
@@ -80,6 +80,9 @@ export function isTracking() {
 // 通过target - key - 拿到要触发的依赖
 export function trigger(target, key) {
   let depsMap = targetMap.get(target);
+
+  if(!depsMap) return;
+
   let dep = depsMap.get(key);
   if (!dep) return;
 
