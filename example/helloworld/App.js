@@ -1,3 +1,5 @@
+import { h } from "../../lib/guide-mini-vue.esm.js";
+
 export const App = {
   // 先不做 template 模板编译
   render() {

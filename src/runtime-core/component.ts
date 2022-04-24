@@ -2,7 +2,7 @@ export function createComponentInstance(vnode) {
   // 初始化组件, 返回一个对象 , 内部包含
   const component = {
     vnode,
-    tpye: vnode.tpye,
+    type: vnode.type,
   };
   return component;
 }
@@ -43,7 +43,7 @@ function handleSetupResult(instance: any, setupResult: any) {
 }
 function finishComponentSetup(instance: any) {
   const Component = instance.type;
-  if (!instance.render) {
+  if (Component.render) {
     instance.render = Component.render;
   }
 }
