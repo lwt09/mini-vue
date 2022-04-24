@@ -7,12 +7,50 @@ export function render(vnode, container) {
 
 function patch(vnode, container) {
   // 处理vnode
-  // 1. 判断vnode是否是一个真实的dom节点 skipnow
-
-  // 2. 判断vnode是否是一个组件, 如果是组件, 则调用processComponent方法
-  processComponent(vnode, container);
+  // 1. 判断vnode是否是一个真实的dom节点
+  console.log(vnode.type);
+  if (typeof vnode.type === "string") {
+    // 是string类型也就是,是普通的element类型的vnode,直接挂载到dom
+    processElement(vnode, container);
+  } else if (typeof vnode.type === "object") {
+    // 2. 判断vnode是否是一个组件, 如果是组件, 则调用processComponent方法
+    processComponent(vnode, container);
+  }
 }
+
+function processElement(vnode: any, container: any) {
+  // 初始化dom
+  mountElement(vnode, container);
+}
+function mountElement(vnode, container) {
+  const el = document.createElement(vnode.type);
+  const { type, props, children } = vnode;
+
+  // 处理属性props
+  for (const key in props) {
+    if (Object.prototype.hasOwnProperty.call(props, key)) {
+      const element = props[key];
+      el.setAttribute(key, element);
+    }
+  }
+
+  // 处理children / string
+  if (typeof children === "string") {
+    el.innerText = children;
+  } else if (Array.isArray(children)) {
+    // 同样每个子节点也是一个vnode ， 去patch
+    mountChildren(children, el);
+  }
+  container.append(el);
+}
+function mountChildren(vnode, container) {
+  vnode.forEach((child) => {
+    patch(child, container);
+  });
+}
+
 function processComponent(vnode: any, container: any) {
+  // 分为初始化和更新
   // 1. 初始化组件 ， 因为vnode的type为组件 ， 所以需要对其进行一些数据的初始化 ， 让其变成组件实例
   mountComponent(vnode, container);
 }

@@ -5,9 +5,12 @@
 1.响应式 (reactivity: reactive effect)
 
 
-##### 依赖
+### 依赖
 1. typescript
 2. jest 测试环境
 3. rollup 打包环境
    1. @rollup/plugin-typescript rollup处理ts
    2. tslib @rollup/plugin-typescript依赖包
+
+### run run build
+打包mini-vue到 `lib` 文件夹, 支持 esm&cjs 引入

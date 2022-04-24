@@ -5,7 +5,6 @@ export function creatApp(rootComponent){
     // 返回一个app对象，里面带有mount方法(初始化挂载)
     return {
         mount(rootContainer){
-            debugger
             // 根组件(render) -> vnode -> dom ->挂载到rootContainer
  
             // 1. 根组件 -> vnode(type type可以是vue component也可以是div等标签, props, children)
