@@ -8,7 +8,7 @@ export function render(vnode, container) {
 function patch(vnode, container) {
   // 处理vnode
   // 1. 判断vnode是否是一个真实的dom节点
-  console.log(vnode.type);
+  // console.log(vnode.type);
   if (typeof vnode.type === "string") {
     // 是string类型也就是,是普通的element类型的vnode,直接挂载到dom
     processElement(vnode, container);
@@ -23,7 +23,7 @@ function processElement(vnode: any, container: any) {
   mountElement(vnode, container);
 }
 function mountElement(vnode, container) {
-  const el = document.createElement(vnode.type);
+  const el = (vnode.el = document.createElement(vnode.type));
   const { type, props, children } = vnode;
 
   // 处理属性props
@@ -55,22 +55,27 @@ function processComponent(vnode: any, container: any) {
   mountComponent(vnode, container);
 }
 
-function mountComponent(vnode: any, container: any) {
+function mountComponent(initialVNode: any, container: any) {
   // 创建组件实例
-  const instance = createComponentInstance(vnode);
+  const instance = createComponentInstance(initialVNode);
   // 往组件实例上挂载一些数据
   setupComponent(instance);
 
   //   看xmind图可以发现 组件初始化全部结束了
   //   应该去调用 组件的render函数了
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, initialVNode, container);
 }
-function setupRenderEffect(instance: any, container: any) {
+function setupRenderEffect(instance: any, initialVNode, container: any) {
   //render() { return h("div", "Hello World , hi " + this.msg); }
   // 拿到下一个vnode
-  const subTree = instance.render();
-
+  // 拿到代理对象， this指向它, render里面的this.msg -> 指向proxy上面的msg
+  const proxy = instance.proxy;
+  const subTree = instance.render.call(proxy);
+  
   // vnode -> 再次patch
   // (如果是不是组件类型 是element类型那就直接挂载到dom了)
   patch(subTree, container);
+
+  // 把element的el传递给组件实例
+  initialVNode.el = subTree.el;
 }

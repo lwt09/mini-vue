@@ -1,8 +1,14 @@
+// 组件instance -> 通过 vnode创建，  { vnode, type(vnode.type) , setupState , el , proxy  }
+
+import { PubilcInstanceHandlers } from "./componentPublicInstance";
+
 export function createComponentInstance(vnode) {
   // 初始化组件, 返回一个对象 , 内部包含
   const component = {
     vnode,
     type: vnode.type,
+    // setup 返回值
+    setupState: {},
   };
   return component;
 }
@@ -19,6 +25,10 @@ function setupStatefulComponent(instance: any) {
   // 调用setup 拿到setup之后的返回值 ,
   // instance 里面包含有type ，也就是当前的组件(App对象)
   const Component = instance.type;
+
+  // 创建代理组件对象 ， 将组件实例的数据挂载到这个代理对象上 , 调用render时候，会调用这个代理对象的方法
+  instance.proxy = new Proxy({ _: instance }, PubilcInstanceHandlers);
+
   const { setup } = Component;
   if (setup) {
     //   setup可以返回一个 object 或者一个function
