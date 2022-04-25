@@ -1,4 +1,4 @@
-// 组件instance -> 通过 vnode创建，  { vnode, type(vnode.type) , setupState , el , proxy  }
+// 组件instance -> 通过 vnode创建，  { vnode, type(vnode.type) , setupState  , proxy  }
 
 import { PubilcInstanceHandlers } from "./componentPublicInstance";
 
