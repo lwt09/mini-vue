@@ -9,7 +9,16 @@ export const App = {
     //   ui (tag ,  props  , children / text)
     return h(
       "div",
-      { id: "root", class: ["red", "small"] },
+      {
+        id: "root",
+        class: ["red", "small"],
+        onClick: () => {
+          console.log("click");
+        },
+        onMouseenter() {
+          console.log("mouseenter");
+        },
+      },
       // 带this this.msg / this.$el / this.$data
       "Hello World , hi " + this.msg
       // string

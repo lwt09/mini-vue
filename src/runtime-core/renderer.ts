@@ -31,7 +31,12 @@ function mountElement(vnode, container) {
   for (const key in props) {
     if (Object.prototype.hasOwnProperty.call(props, key)) {
       const element = props[key];
-      el.setAttribute(key, element);
+      if (/^on[A-Z]/.test(key)) {
+        const event = key.slice(2).toLowerCase();
+        el.addEventListener(event , element);
+      } else {
+        el.setAttribute(key, element);
+      }
     }
   }
 
