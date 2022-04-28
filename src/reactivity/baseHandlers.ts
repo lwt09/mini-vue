@@ -1,5 +1,5 @@
 import { extend } from "./../shared/index";
-import { isObject } from "../shared";
+import { isObject } from "../shared/index";
 import { track, trigger } from "./effect";
 import { reactive, ReactiveFlags, readonly } from "./reactive";
 
@@ -51,7 +51,7 @@ export const multableHandlers = {
 export const readonlyHandlers = {
   get: readonlyGet,
   set(target, key, value) {
-    console.warn(`${key} is readonly`);
+    console.warn(`${key} 修改set失败, 因为 target 是只读的readonly类型`);
     return true;
   },
 };

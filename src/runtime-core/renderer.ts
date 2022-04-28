@@ -74,7 +74,7 @@ function mountComponent(initialVNode: any, container: any) {
 function setupRenderEffect(instance: any, initialVNode, container: any) {
   //render() { return h("div", "Hello World , hi " + this.msg); }
   // 拿到下一个vnode
-  // 拿到代理对象， this指向它, render里面的this.msg -> 指向proxy上面的msg
+  // 拿到代理对象， this指向它, render里面的this.msg -> 指向proxy上面的msg -> 会去拿setupState.msg
   const proxy = instance.proxy;
   const subTree = instance.render.call(proxy);
 

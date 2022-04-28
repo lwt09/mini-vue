@@ -1,3 +1,4 @@
+import { isObject } from "../shared/index";
 import {
   multableHandlers,
   readonlyHandlers,
@@ -21,6 +22,12 @@ export function shallowReadonly(raw) {
 
 // 生成 proxy
 function createProxyObject(raw, baseHandlers) {
+  // 传入的raw必须是一个对象o
+  if (!isObject(raw)) {
+    console.warn(`target ${raw} 必须是一个对象的`);
+    return raw;
+  }
+
   return new Proxy(raw, baseHandlers);
 }
 

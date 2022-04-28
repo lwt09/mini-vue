@@ -1,12 +1,14 @@
 import { h } from "../../lib/guide-mini-vue.esm.js";
-
+import { Foo } from "./Foo.js";
 window.self = null;
 export const App = {
   // 先不做 template 模板编译
+  name: "App",
   render() {
     window.self = this;
 
     //   ui (tag ,  props  , children / text)
+    //   通过bind绑定 this 指向当前组件实例的proxy 访问proxy的属性和方法，被代理到instance的setupState\props等上面
     return h(
       "div",
       {
@@ -20,7 +22,7 @@ export const App = {
         },
       },
       // 带this this.msg / this.$el / this.$data
-      "Hello World , hi " + this.msg
+      [h("div", {}, "hello" + this.msg), h(Foo, { count: this.msg })]
       // string
       // "hello wihtout this.msg"
       // array

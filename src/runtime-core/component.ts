@@ -1,5 +1,7 @@
-// 组件instance -> 通过 vnode创建，  { vnode, type(vnode.type) , setupState  , proxy  }
+// 组件instance -> 通过 vnode创建，  { vnode, type(vnode.type) , setupState  , proxy  , 组件的render函数 }
 
+import { shallowReadonly } from "../reactivity/reactive";
+import { initProps } from "./componentProps";
 import { PubilcInstanceHandlers } from "./componentPublicInstance";
 
 export function createComponentInstance(vnode) {
@@ -9,12 +11,15 @@ export function createComponentInstance(vnode) {
     type: vnode.type,
     // setup 返回值
     setupState: {},
+    // props:
+    props: {},
   };
   return component;
 }
 
 export function setupComponent(instance) {
-  // initProps
+  // initProps 把h函数(createVNode)传递过来的props  赋值给组件实例的props
+  initProps(instance, instance.vnode.props);
   // initSlots
 
   // initState (添加方法， 让组件实例处理调用setup之后的返回值) , 有状态的组件
@@ -31,8 +36,8 @@ function setupStatefulComponent(instance: any) {
 
   const { setup } = Component;
   if (setup) {
-    //   setup可以返回一个 object 或者一个function
-    const setupResult = setup();
+    //   setup可以返回一个 object 或者一个function , 再在setup里面被接收
+    const setupResult = setup(shallowReadonly(instance.props));
 
     handleSetupResult(instance, setupResult);
   }

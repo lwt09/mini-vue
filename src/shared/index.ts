@@ -7,3 +7,5 @@ export function isObject(val) {
 export function isChanged(oldVal, newVal) {
   return Object.is(oldVal, newVal) ? false : true;
 }
+
+export const hasOwn = (raw, key) => raw.hasOwnProperty(key);

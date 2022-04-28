@@ -1,4 +1,4 @@
-import { extend } from "../shared";
+import { extend } from "../shared/index";
 
 export class ReactiveEffect {
   private _fn: any;
@@ -81,7 +81,7 @@ export function isTracking() {
 export function trigger(target, key) {
   let depsMap = targetMap.get(target);
 
-  if(!depsMap) return;
+  if (!depsMap) return;
 
   let dep = depsMap.get(key);
   if (!dep) return;
