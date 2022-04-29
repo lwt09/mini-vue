@@ -1,7 +1,7 @@
 import { render } from "./renderer"
 import { createVNode } from "./vnode"
 
-export function creatApp(rootComponent){
+export function createApp(rootComponent){
     // 返回一个app对象，里面带有mount方法(初始化挂载)
     return {
         mount(rootContainer){
