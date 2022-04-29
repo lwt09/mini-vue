@@ -1,6 +1,7 @@
 // 组件instance -> 通过 vnode创建，  { vnode, type(vnode.type) , setupState  , proxy  , 组件的render函数 }
 
 import { shallowReadonly } from "../reactivity/reactive";
+import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PubilcInstanceHandlers } from "./componentPublicInstance";
 
@@ -13,7 +14,13 @@ export function createComponentInstance(vnode) {
     setupState: {},
     // props:
     props: {},
+
+    // emit
+    emit: () => {},
   };
+
+  component.emit = emit.bind(null, component) as any;
+
   return component;
 }
 
@@ -37,7 +44,10 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component;
   if (setup) {
     //   setup可以返回一个 object 或者一个function , 再在setup里面被接收
-    const setupResult = setup(shallowReadonly(instance.props));
+    const setupResult = setup(shallowReadonly(instance.props), {
+      // 传入emit给子组件， 让子组件可以调用父组件的emit
+      emit: instance.emit,
+    });
 
     handleSetupResult(instance, setupResult);
   }
