@@ -3,6 +3,7 @@ export const enum ShapeFlags {
   STATEFUL_COMPONENT = 1 << 1, // 0010
   TEXT_CHILDREN = 1 << 2, //0100
   ARRAY_CHILDREN = 1 << 3, //1000
+  SLOTS_CHILDREN = 1 << 4, //10000
 }
 
 // 二进制情况下  0100 | 0000 = 0100

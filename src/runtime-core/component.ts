@@ -4,6 +4,7 @@ import { shallowReadonly } from "../reactivity/reactive";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PubilcInstanceHandlers } from "./componentPublicInstance";
+import { initSlots } from "./componentSlots";
 
 export function createComponentInstance(vnode) {
   // 初始化组件, 返回一个对象 , 内部包含
@@ -17,6 +18,8 @@ export function createComponentInstance(vnode) {
 
     // emit
     emit: () => {},
+    // slots
+    slots: {},
   };
 
   component.emit = emit.bind(null, component) as any;
@@ -28,7 +31,7 @@ export function setupComponent(instance) {
   // initProps 把h函数(createVNode)传递过来的props  赋值给组件实例的props
   initProps(instance, instance.vnode.props);
   // initSlots
-
+  initSlots(instance, instance.vnode.children);
   // initState (添加方法， 让组件实例处理调用setup之后的返回值) , 有状态的组件
   setupStatefulComponent(instance);
 }

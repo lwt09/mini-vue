@@ -9,11 +9,20 @@ export function createVNode(type, props?, children?) {
     shapeFlag: getShapeFlag(type),
   };
 
+  // 判断是children是数组还是text
   if (Array.isArray(children)) {
     vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
   } else if (typeof children === "string") {
     vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN;
   }
+
+  // 判断children是不是slot (obj & 组件)
+  if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+    if (typeof children === "object") {
+      vnode.shapeFlag |= ShapeFlags.SLOTS_CHILDREN;
+    }
+  }
+
   return vnode;
 }
 
