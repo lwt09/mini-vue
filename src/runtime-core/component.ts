@@ -46,11 +46,17 @@ function setupStatefulComponent(instance: any) {
 
   const { setup } = Component;
   if (setup) {
+    // 储存instance
+    setCurrentInstance(instance);
+
     //   setup可以返回一个 object 或者一个function , 再在setup里面被接收
     const setupResult = setup(shallowReadonly(instance.props), {
       // 传入emit给子组件， 让子组件可以调用父组件的emit
       emit: instance.emit,
     });
+
+    // 清空instance
+    setCurrentInstance(null);
 
     handleSetupResult(instance, setupResult);
   }
@@ -74,4 +80,13 @@ function finishComponentSetup(instance: any) {
   if (Component.render) {
     instance.render = Component.render;
   }
+}
+
+// setup内部获取instance
+let currentInstance = null;
+export function getCurrentInstance() {
+  return currentInstance;
+}
+function setCurrentInstance(instance) {
+  currentInstance = instance;
 }
