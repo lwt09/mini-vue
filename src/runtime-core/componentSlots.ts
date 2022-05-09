@@ -7,9 +7,6 @@ export function initSlots(instance, children) {
   }
 }
 
-function normalizeChildren(value) {
-  return Array.isArray(value) ? value : [value];
-}
 function normalizeSlots(instance, children) {
   for (const key in children) {
     if (Object.prototype.hasOwnProperty.call(children, key)) {
@@ -17,4 +14,9 @@ function normalizeSlots(instance, children) {
       instance.slots[key] = (prop) => normalizeChildren(value(prop));
     }
   }
+}
+
+// 把 h(xx) -> [h(xx)] 转数组
+function normalizeChildren(value) {
+  return Array.isArray(value) ? value : [value];
 }

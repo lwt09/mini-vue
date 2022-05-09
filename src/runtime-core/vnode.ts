@@ -1,5 +1,9 @@
 import { ShapeFlags } from "../shared/ShapeFlags";
 
+// Fragment -> 只渲染children
+export const Fragment = Symbol("Fragment");
+export const Text = Symbol("Text");
+
 export function createVNode(type, props?, children?) {
   const vnode = {
     type,
@@ -24,6 +28,10 @@ export function createVNode(type, props?, children?) {
   }
 
   return vnode;
+}
+
+export function createTextNode(str: string) {
+  return createVNode(Text, {}, str);
 }
 
 function getShapeFlag(type: any) {

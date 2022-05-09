@@ -1,3 +1,4 @@
+import { Fragment } from "./../vnode";
 import { createVNode } from "../vnode";
 
 export function renderSlots(slots, key, data) {
@@ -8,7 +9,7 @@ export function renderSlots(slots, key, data) {
   let slot = slots[key];
   if (slot) {
     if (typeof slot === "function") {
-      return createVNode("div", {}, slot(data));
+      return createVNode(Fragment, {}, slot(data));
     }
   }
 }

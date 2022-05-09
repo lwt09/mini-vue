@@ -1,3 +1,4 @@
+import { Fragment, Text } from "./vnode";
 import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 
@@ -7,16 +8,40 @@ export function render(vnode, container) {
 }
 
 function patch(vnode, container) {
-  // 处理vnode
-  // 1. 判断vnode是否是一个真实的dom节点
-  // console.log(vnode.type);
-  if (vnode.shapeFlag & ShapeFlags.ELEMENT) {
-    // 是string类型也就是,是普通的element类型的vnode,直接挂载到dom
-    processElement(vnode, container);
-  } else if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    // 2. 判断vnode是否是一个组件, 如果是组件, 则调用processComponent方法
-    processComponent(vnode, container);
+  switch (vnode.type) {
+    // 只处理 vnode.children
+    case Fragment:
+      processFragment(vnode, container);
+      break;
+    // 只处理 textNode
+    case Text:
+      processTextNode(vnode, container);
+      break;
+
+    default:
+      // 处理vnode
+      // 1. 判断vnode是否是一个真实的dom节点
+      // console.log(vnode.type);
+      if (vnode.shapeFlag & ShapeFlags.ELEMENT) {
+        // 是string类型也就是,是普通的element类型的vnode,直接挂载到dom
+        processElement(vnode, container);
+      } else if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        // 2. 判断vnode是否是一个组件, 如果是组件, 则调用processComponent方法
+        processComponent(vnode, container);
+      }
+      break;
   }
+}
+
+// 处理Fragment
+function processFragment(vnode, container) {
+  mountChildren(vnode.children, container);
+}
+// 处理存文本节点
+function processTextNode(vnode, container) {
+  const el = (vnode.el = document.createTextNode(vnode.children));
+  console.log(vnode)
+  container.append(el);
 }
 
 function processElement(vnode: any, container: any) {
@@ -33,7 +58,7 @@ function mountElement(vnode, container) {
       const element = props[key];
       if (/^on[A-Z]/.test(key)) {
         const event = key.slice(2).toLowerCase();
-        el.addEventListener(event , element);
+        el.addEventListener(event, element);
       } else {
         el.setAttribute(key, element);
       }

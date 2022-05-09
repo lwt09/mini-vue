@@ -1,4 +1,4 @@
-import { h } from "../../lib/guide-mini-vue.esm.js";
+import { h, createTextNode } from "../../lib/guide-mini-vue.esm.js";
 import Foo from "./Foo.js";
 
 export default {
@@ -16,12 +16,14 @@ export default {
         // footer: h("p", {}, "app传递给foo的内容,我是footer"),
 
         // 5. 作用域插槽
-        header: ({ data }) =>
+        header: ({ data }) => [
           h(
             "p",
             {},
             "app传递给foo的内容,我是header , 接收到子组件给我的信息: " + data
           ),
+          createTextNode("你好呀"),
+        ],
         footer: ({ data }) =>
           h(
             "p",
